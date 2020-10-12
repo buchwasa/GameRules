@@ -5,6 +5,8 @@ namespace libgamerules;
 
 use pocketmine\block\VanillaBlocks;
 use pocketmine\event\block\BlockBurnEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
@@ -55,10 +57,12 @@ class EventListener implements Listener
 		}
 	}
 
-	public function handleInteract(PlayerInteractEvent $ev): void
+	public function handleSend(DataPacketSendEvent $ev): void
 	{
-		if ($ev->getBlock()->getId() === VanillaBlocks::TNT()->getId() && !$this->loader->isGameRuleEnabled("tntexplodes")) {
-			$ev->cancel();
+		foreach ($ev->getPackets() as $packet) {
+			if ($packet instanceof StartGamePacket) {
+				$packet->gameRules = $this->loader->getGameRuleList();
+			}
 		}
 	}
 
@@ -69,12 +73,17 @@ class EventListener implements Listener
 		}
 	}
 
-	public function handleSend(DataPacketSendEvent $ev): void
+	public function handleDamage(EntityDamageEvent $ev): void
 	{
-		foreach ($ev->getPackets() as $packet) {
-			if ($packet instanceof StartGamePacket) {
-				$packet->gameRules = $this->loader->getGameRuleList();
-			}
+		if ($ev instanceof EntityDamageByEntityEvent && !$this->loader->isGameRuleEnabled("pvp")) {
+			$ev->cancel();
+		}
+	}
+
+	public function handleInteract(PlayerInteractEvent $ev): void
+	{
+		if ($ev->getBlock()->getId() === VanillaBlocks::TNT()->getId() && !$this->loader->isGameRuleEnabled("tntexplodes")) {
+			$ev->cancel();
 		}
 	}
 
