@@ -7,6 +7,7 @@ use pocketmine\block\VanillaBlocks;
 use pocketmine\event\block\BlockBurnEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\entity\EntityDeathEvent;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerDeathEvent;
@@ -16,6 +17,7 @@ use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\network\mcpe\protocol\GameRulesChangedPacket;
 use pocketmine\network\mcpe\protocol\SettingsCommandPacket;
 use pocketmine\network\mcpe\protocol\StartGamePacket;
+use pocketmine\player\Player;
 
 class EventListener implements Listener
 {
@@ -35,7 +37,6 @@ class EventListener implements Listener
 			if ($gameRule[0] !== "/gamerule") {
 				return;
 			}
-			var_dump($gameRule);
 
 			if (!$this->loader->isGameRuleLocked($gameRule[1])) {
 				$this->loader->addGameRule($gameRule[1], $gameRule[2] === "true");
@@ -85,6 +86,13 @@ class EventListener implements Listener
 	public function handleDeath(PlayerDeathEvent $ev): void
 	{
 		$ev->setKeepInventory($this->loader->isGameRuleEnabled("keepinventory"));
+	}
+
+	public function handleEntityDeath(EntityDeathEvent $ev): void
+	{
+		if (!($ev->getEntity() instanceof Player) && !$this->loader->isGameRuleEnabled("domobloot")) {
+			$ev->setDrops([]);
+		}
 	}
 
 	public function handleInteract(PlayerInteractEvent $ev): void
