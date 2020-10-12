@@ -40,10 +40,7 @@ class EventListener implements Listener
 			}
 
 			if (!$this->loader->isGameRuleLocked($gameRule[1])) {
-				$this->loader->addGameRule($gameRule[1], $gameRule[2] === "true");
-				$pk = new GameRulesChangedPacket();
-				$pk->gameRules = $this->loader->getGameRuleArray($gameRule[1]);
-				$this->loader->getPlugin()->getServer()->broadcastPackets($this->loader->getPlugin()->getServer()->getOnlinePlayers(), [$pk]);
+				$this->loader->addGameRule($gameRule[1], $gameRule[2] === "true", $this->loader->getPlugin()->getServer(), true);
 			}
 		}
 	}

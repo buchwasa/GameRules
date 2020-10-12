@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace libgamerules;
 
+use pocketmine\network\mcpe\protocol\GameRulesChangedPacket;
 use pocketmine\network\mcpe\protocol\types\BoolGameRule;
 use pocketmine\plugin\Plugin;
+use pocketmine\Server;
 
 class Loader
 {
@@ -43,17 +45,19 @@ class Loader
 	}
 
 	/**
-	 * Locks a gamerule to a state that cannot be changed.
+	 * Locks a gamerule to a state that cannot be changed by a player.
 	 *
 	 * @param string $gameRule
 	 * @param bool $lockEnabled
+	 * @param Server|null $server - optional, only if $needsUpdated = true
+	 * @param bool $needsUpdated
 	 */
-	public function lockGameRule(string $gameRule, bool $lockEnabled): void
+	public function lockGameRule(string $gameRule, bool $lockEnabled, ?Server $server = null, bool $needsUpdated = false): void
 	{
 		if ($this->isGameRuleLocked($gameRule)) {
 			unset($this->lockedGameRules[mb_strtolower($gameRule)]);
 		}
-		$this->addGameRule($gameRule, $lockEnabled);
+		$this->addGameRule($gameRule, $lockEnabled, $server, $needsUpdated);
 		$this->lockedGameRules[mb_strtolower($gameRule)] = true;
 	}
 
@@ -67,14 +71,21 @@ class Loader
 	 *
 	 * @param string $gameRule
 	 * @param bool $enabled
+	 * @param Server|null $server Required only if $needsUpdate = true
+	 * @param bool $needsUpdated
 	 */
-	public function addGameRule(string $gameRule, bool $enabled): void
+	public function addGameRule(string $gameRule, bool $enabled, ?Server $server = null, bool $needsUpdated = false): void
 	{
 		if (!$this->isGameRuleLocked($gameRule)) {
 			$ev = new GameRuleChangedEvent(mb_strtolower($gameRule), $enabled);
 			$ev->call();
 			if (!$ev->isCancelled()) {
 				$this->cachedGameRules[$ev->getGameRule()] = new BoolGameRule($ev->isGameRuleEnabled());
+				if ($needsUpdated) {
+					$pk = new GameRulesChangedPacket();
+					$pk->gameRules = $this->getGameRuleArray($ev->getGameRule());
+					$server->broadcastPackets($server->getOnlinePlayers(), [$pk]);
+				}
 			}
 		}
 	}
