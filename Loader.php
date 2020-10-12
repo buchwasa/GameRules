@@ -21,7 +21,8 @@ class Loader
 		$this->plugin->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this->plugin);
 		$disabledGameRules = [
 			"dofiretick", "domobspawning", "mobgriefing",
-			"doweathercycle", "commandblocksenabled", "doentitydrops"
+			"doweathercycle", "commandblocksenabled", "doentitydrops",
+			"spawnradius", "randomtickspeed"
 		];
 		foreach ($disabledGameRules as $disabledGameRule) {
 			$this->lockGameRule($disabledGameRule, false);
