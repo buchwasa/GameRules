@@ -26,6 +26,12 @@ class Loader
 		return $this->plugin;
 	}
 
+	/**
+	 * Locks a gamerule to a state that cannot be changed.
+	 *
+	 * @param string $gameRule
+	 * @param bool $lockEnabled
+	 */
 	public function lockGameRule(string $gameRule, bool $lockEnabled): void
 	{
 		$this->addGameRule($gameRule, $lockEnabled);
@@ -37,14 +43,39 @@ class Loader
 		return isset($this->lockedGameRules[$gameRule]);
 	}
 
+	/**
+	 * Adds a gamerule to the cache
+	 *
+	 * @param string $gameRule
+	 * @param bool $enabled
+	 */
 	public function addGameRule(string $gameRule, bool $enabled): void
 	{
 		if (!$this->isGameRuleLocked($gameRule)) {
-			if (isset($this->cachedGameRules[$gameRule])) {
-				unset($this->cachedGameRules[$gameRule]);
-			}
 			$this->cachedGameRules[$gameRule] = new BoolGameRule($enabled);
 		}
+	}
+
+	/**
+	 * Gets a gamerule from the cache, returns null if not in cache.
+	 *
+	 * @param string $gameRule
+	 * @return BoolGameRule|null
+	 */
+	public function getGameRule(string $gameRule): ?BoolGameRule
+	{
+		return isset($this->cachedGameRules[$gameRule]) ? $this->cachedGameRules[$gameRule] : null;
+	}
+
+	/**
+	 * Gets the gamerule and returns it as an array for sending.
+	 *
+	 * @param string $gameRule
+	 * @return null[]|BoolGameRule[]|null
+	 */
+	public function getGameRuleArray(string $gameRule): ?array
+	{
+		return isset($this->cachedGameRules[$gameRule]) ? [$gameRule => $this->getGameRule($gameRule)] : null;
 	}
 
 	/**
