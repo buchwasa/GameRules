@@ -26,6 +26,10 @@ class EventListener implements Listener
 		$packet = $ev->getPacket();
 		if ($packet instanceof SettingsCommandPacket) {
 			$gameRule = explode(" ", $packet->getCommand());
+			if($gameRule[0] === "/daylock") {
+				return;
+			}
+
 			if (!$this->loader->isGameRuleLocked($gameRule[1])) {
 				$this->loader->addGameRule($gameRule[1], $gameRule[2] === "true");
 				$pk = new GameRulesChangedPacket();
