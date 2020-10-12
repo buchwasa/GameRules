@@ -13,6 +13,7 @@ class Loader implements Listener
 	private Plugin $plugin;
 	/** @var BoolGameRule[] */
 	private array $cachedGameRules = [];
+	private array $lockedGameRules = [];
 
 	public function __construct(Plugin $plugin)
 	{
@@ -25,9 +26,26 @@ class Loader implements Listener
 		return $this->plugin;
 	}
 
+	public function lockGameRule(string $gameRule, bool $lockEnabled): void
+	{
+		$this->lockedGameRules[$gameRule] = true;
+		$this->cachedGameRules[$gameRule] = new BoolGameRule($lockEnabled);
+	}
+
+	public function isGameRuleLocked(string $gameRule): bool
+	{
+		return isset($this->lockedGameRules[$gameRule]);
+	}
+
 	public function addGameRule(string $gameRule, bool $enabled): void
 	{
-		$this->cachedGameRules[$gameRule] = new BoolGameRule($enabled);
+		if (!$this->isGameRuleLocked($gameRule)) {
+			if (isset($this->cachedGameRules[$gameRule])) {
+				unset($this->cachedGameRules[$gameRule]);
+			}
+
+			$this->cachedGameRules[$gameRule] = new BoolGameRule($enabled);
+		}
 	}
 
 	/**
@@ -36,5 +54,10 @@ class Loader implements Listener
 	public function getGameRuleList(): array
 	{
 		return $this->cachedGameRules;
+	}
+
+	public function isGameRuleEnabled(string $gameRule): bool
+	{
+		return isset($this->cachedGameRules[$gameRule]) && $this->cachedGameRules[$gameRule]->getValue() === true;
 	}
 }
