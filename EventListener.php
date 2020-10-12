@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace libgamerules;
 
+use pocketmine\block\VanillaBlocks;
+use pocketmine\event\block\BlockBurnEvent;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\network\mcpe\protocol\GameRulesChangedPacket;
@@ -49,6 +52,20 @@ class EventListener implements Listener
 					$world->stopTime();
 				}
 			}
+		}
+	}
+
+	public function handleInteract(PlayerInteractEvent $ev): void
+	{
+		if ($ev->getBlock()->getId() === VanillaBlocks::TNT()->getId() && !$this->loader->isGameRuleEnabled("tntexplodes")) {
+			$ev->cancel();
+		}
+	}
+
+	public function handleBurn(BlockBurnEvent $ev): void
+	{
+		if ($ev->getBlock()->getId() === VanillaBlocks::TNT()->getId() && !$this->loader->isGameRuleEnabled("tntexplodes")) {
+			$ev->cancel();
 		}
 	}
 

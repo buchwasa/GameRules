@@ -41,12 +41,14 @@ class Loader
 	 */
 	public function lockGameRule(string $gameRule, bool $lockEnabled): void
 	{
+		$gameRule = mb_strtolower($gameRule);
 		$this->addGameRule($gameRule, $lockEnabled);
 		$this->lockedGameRules[$gameRule] = true;
 	}
 
 	public function isGameRuleLocked(string $gameRule): bool
 	{
+		$gameRule = mb_strtolower($gameRule);
 		return isset($this->lockedGameRules[$gameRule]);
 	}
 
@@ -58,6 +60,7 @@ class Loader
 	 */
 	public function addGameRule(string $gameRule, bool $enabled): void
 	{
+		$gameRule = mb_strtolower($gameRule);
 		if (!$this->isGameRuleLocked($gameRule)) {
 			$ev = new GameRuleChangedEvent($gameRule, $enabled);
 			$ev->call();
@@ -75,6 +78,7 @@ class Loader
 	 */
 	public function getGameRule(string $gameRule): ?BoolGameRule
 	{
+		$gameRule = mb_strtolower($gameRule);
 		return isset($this->cachedGameRules[$gameRule]) ? $this->cachedGameRules[$gameRule] : null;
 	}
 
@@ -86,6 +90,7 @@ class Loader
 	 */
 	public function getGameRuleArray(string $gameRule): ?array
 	{
+		$gameRule = mb_strtolower($gameRule);
 		return isset($this->cachedGameRules[$gameRule]) ? [$gameRule => $this->getGameRule($gameRule)] : null;
 	}
 
@@ -99,6 +104,7 @@ class Loader
 
 	public function isGameRuleEnabled(string $gameRule): bool
 	{
+		$gameRule = mb_strtolower($gameRule);
 		return isset($this->cachedGameRules[$gameRule]) && $this->cachedGameRules[$gameRule]->getValue() === true;
 	}
 }
