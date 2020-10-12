@@ -59,7 +59,11 @@ class Loader
 	public function addGameRule(string $gameRule, bool $enabled): void
 	{
 		if (!$this->isGameRuleLocked($gameRule)) {
-			$this->cachedGameRules[$gameRule] = new BoolGameRule($enabled);
+			$ev = new GameRuleChangedEvent($gameRule, $enabled);
+			$ev->call();
+			if (!$ev->isCancelled()) {
+				$this->cachedGameRules[$gameRule] = new BoolGameRule($enabled);
+			}
 		}
 	}
 

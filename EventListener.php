@@ -26,7 +26,7 @@ class EventListener implements Listener
 		$packet = $ev->getPacket();
 		if ($packet instanceof SettingsCommandPacket) {
 			$gameRule = explode(" ", $packet->getCommand());
-			if($gameRule[0] !== "/gamerule") {
+			if ($gameRule[0] !== "/gamerule") {
 				return;
 			}
 
@@ -35,6 +35,19 @@ class EventListener implements Listener
 				$pk = new GameRulesChangedPacket();
 				$pk->gameRules = $this->loader->getGameRuleArray($gameRule[1]);
 				$this->loader->getPlugin()->getServer()->broadcastPackets($this->loader->getPlugin()->getServer()->getOnlinePlayers(), [$pk]);
+			}
+		}
+	}
+
+	public function handleGameRuleChange(GameRuleChangedEvent $ev): void
+	{
+		if ($ev->getGameRule() === "dodaylightcycle") {
+			foreach ($this->loader->getPlugin()->getServer()->getWorldManager()->getWorlds() as $world) {
+				if ($ev->isGameRuleEnabled()) {
+					$world->startTime();
+				} else {
+					$world->stopTime();
+				}
 			}
 		}
 	}
