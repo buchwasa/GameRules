@@ -27,6 +27,14 @@ class Loader
 		foreach ($disabledGameRules as $disabledGameRule) {
 			$this->lockGameRule($disabledGameRule, false);
 		}
+
+		$defaultGameRules = [
+			"pvp", "tntexplodes", "domobloot",
+			"naturalregeneration", "dotiledrops", "dodaylightcycle"
+		];
+		foreach ($defaultGameRules as $defaultGameRule) {
+			$this->addGameRule($defaultGameRule, true);
+		}
 	}
 
 	public function getPlugin(): Plugin
