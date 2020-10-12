@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace libgamerules;
 
 use pocketmine\block\VanillaBlocks;
+use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockBurnEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -66,6 +67,13 @@ class EventListener implements Listener
 			if ($packet instanceof StartGamePacket) {
 				$packet->gameRules = $this->loader->getGameRuleList();
 			}
+		}
+	}
+
+	public function handleBreak(BlockBreakEvent $ev): void
+	{
+		if(!$this->loader->isGameRuleEnabled("dotiledrops")) {
+			$ev->setDrops([]);
 		}
 	}
 
