@@ -35,6 +35,7 @@ class EventListener implements Listener
 			if ($gameRule[0] !== "/gamerule") {
 				return;
 			}
+			var_dump($gameRule);
 
 			if (!$this->loader->isGameRuleLocked($gameRule[1])) {
 				$this->loader->addGameRule($gameRule[1], $gameRule[2] === "true");
