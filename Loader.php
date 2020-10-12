@@ -28,8 +28,8 @@ class Loader
 
 	public function lockGameRule(string $gameRule, bool $lockEnabled): void
 	{
-		$this->lockedGameRules[$gameRule] = true;
 		$this->addGameRule($gameRule, $lockEnabled);
+		$this->lockedGameRules[$gameRule] = true;
 	}
 
 	public function isGameRuleLocked(string $gameRule): bool
@@ -43,7 +43,6 @@ class Loader
 			if (isset($this->cachedGameRules[$gameRule])) {
 				unset($this->cachedGameRules[$gameRule]);
 			}
-
 			$this->cachedGameRules[$gameRule] = new BoolGameRule($enabled);
 		}
 	}
