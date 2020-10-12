@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace libgamerules;
 
-use pocketmine\event\Listener;
 use pocketmine\network\mcpe\protocol\types\BoolGameRule;
 use pocketmine\plugin\Plugin;
 
-class Loader implements Listener
+class Loader
 {
 	/** @var Plugin */
 	private Plugin $plugin;
 	/** @var BoolGameRule[] */
 	private array $cachedGameRules = [];
+	/** @var bool[] */
 	private array $lockedGameRules = [];
 
 	public function __construct(Plugin $plugin)
