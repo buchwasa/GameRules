@@ -4,47 +4,37 @@ declare(strict_types=1);
 namespace libgamerules;
 
 use pocketmine\event\Listener;
-use pocketmine\event\server\DataPacketReceiveEvent;
-use pocketmine\event\server\DataPacketSendEvent;
-use pocketmine\network\mcpe\protocol\GameRulesChangedPacket;
-use pocketmine\network\mcpe\protocol\SettingsCommandPacket;
-use pocketmine\network\mcpe\protocol\StartGamePacket;
 use pocketmine\network\mcpe\protocol\types\BoolGameRule;
 use pocketmine\plugin\Plugin;
 
 class Loader implements Listener
 {
+	/** @var Plugin */
 	private Plugin $plugin;
-	/** @var array */
+	/** @var BoolGameRule[] */
 	private array $cachedGameRules = [];
 
 	public function __construct(Plugin $plugin)
 	{
 		$this->plugin = $plugin;
-		$plugin->getServer()->getPluginManager()->registerEvents($this, $plugin);
+		$this->plugin->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this->plugin);
 	}
 
-	public function handleReceive(DataPacketReceiveEvent $ev): void
+	public function getPlugin(): Plugin
 	{
-		$packet = $ev->getPacket();
-		if ($packet instanceof SettingsCommandPacket) {
-			$cmd = $packet->getCommand();
-			$cmd = str_replace("/gamerule ", "", $cmd);
-			$array = explode(" ", $cmd);
-
-			$this->cachedGameRules[$array[0]] = new BoolGameRule($array[1] === "true");
-			$pk = new GameRulesChangedPacket();
-			$pk->gameRules = $this->cachedGameRules;
-			$this->plugin->getServer()->broadcastPackets($this->plugin->getServer()->getOnlinePlayers(), [$pk]);
-		}
+		return $this->plugin;
 	}
 
-	public function handleSend(DataPacketSendEvent $ev): void
+	public function addGameRule(string $gameRule, bool $enabled): void
 	{
-		foreach ($ev->getPackets() as $packet) {
-			if ($packet instanceof StartGamePacket) {
-				$packet->gameRules = $this->cachedGameRules;
-			}
-		}
+		$this->cachedGameRules[$gameRule] = new BoolGameRule($enabled);
+	}
+
+	/**
+	 * @return BoolGameRule[]
+	 */
+	public function getGameRuleList(): array
+	{
+		return $this->cachedGameRules;
 	}
 }
