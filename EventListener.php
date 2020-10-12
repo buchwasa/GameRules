@@ -25,12 +25,9 @@ class EventListener implements Listener
 	{
 		$packet = $ev->getPacket();
 		if ($packet instanceof SettingsCommandPacket) {
-			$cmd = $packet->getCommand();
-			$cmd = str_replace("/gamerule ", "", $cmd);
-			$array = explode(" ", $cmd);
-
-			if (!$this->loader->isGameRuleLocked($array[0])) {
-				$this->loader->addGameRule($array[0], $array[1] === "true");
+			$gameRule = explode(" ", $packet->getCommand());
+			if (!$this->loader->isGameRuleLocked($gameRule[1])) {
+				$this->loader->addGameRule($gameRule[1], $gameRule[2] === "true");
 				$pk = new GameRulesChangedPacket();
 				$pk->gameRules = $this->loader->getGameRuleList();
 				$this->loader->getPlugin()->getServer()->broadcastPackets($this->loader->getPlugin()->getServer()->getOnlinePlayers(), [$pk]);
