@@ -9,6 +9,7 @@ use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\DataPacketSendEvent;
@@ -78,6 +79,11 @@ class EventListener implements Listener
 		if ($ev instanceof EntityDamageByEntityEvent && !$this->loader->isGameRuleEnabled("pvp")) {
 			$ev->cancel();
 		}
+	}
+
+	public function handleDeath(PlayerDeathEvent $ev): void
+	{
+		$ev->setKeepInventory($this->loader->isGameRuleEnabled("keepinventory"));
 	}
 
 	public function handleInteract(PlayerInteractEvent $ev): void
