@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace libgamerules;
+namespace buchwasa\libgamerules;
 
 use pocketmine\event\CancellableTrait;
 use pocketmine\event\Event;

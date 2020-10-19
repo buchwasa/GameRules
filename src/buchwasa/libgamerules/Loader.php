@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace libgamerules;
+namespace buchwasa\libgamerules;
 
 use pocketmine\network\mcpe\protocol\GameRulesChangedPacket;
 use pocketmine\network\mcpe\protocol\types\BoolGameRule;

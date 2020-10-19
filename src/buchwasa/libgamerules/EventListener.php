@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace libgamerules;
+namespace buchwasa\libgamerules;
 
 use pocketmine\block\VanillaBlocks;
 use pocketmine\event\block\BlockBreakEvent;
@@ -15,7 +15,6 @@ use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\DataPacketSendEvent;
-use pocketmine\network\mcpe\protocol\GameRulesChangedPacket;
 use pocketmine\network\mcpe\protocol\SettingsCommandPacket;
 use pocketmine\network\mcpe\protocol\StartGamePacket;
 use pocketmine\player\Player;
