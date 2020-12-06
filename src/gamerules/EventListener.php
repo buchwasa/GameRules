@@ -22,11 +22,11 @@ use pocketmine\player\Player;
 class EventListener implements Listener
 {
 	/** @var Loader */
-	private Loader $loader;
+	private Loader $plugin;
 
-	public function __construct(Loader $loader)
+	public function __construct(Loader $plugin)
 	{
-		$this->loader = $loader;
+		$this->plugin = $plugin;
 	}
 
 	public function handleReceive(DataPacketReceiveEvent $ev): void
@@ -38,8 +38,8 @@ class EventListener implements Listener
 				return;
 			}
 
-			if (!$this->loader->isGameRuleLocked($gameRule[1])) {
-				$this->loader->addGameRule($gameRule[1], $gameRule[2] === "true", $this->loader->getPlugin()->getServer(), true);
+			if (!$this->plugin->isGameRuleLocked($gameRule[1])) {
+				$this->plugin->addGameRule($gameRule[1], $gameRule[2] === "true", $this->plugin->getServer(), true);
 			}
 		}
 	}
@@ -47,7 +47,7 @@ class EventListener implements Listener
 	public function handleGameRuleChange(GameRuleChangedEvent $ev): void
 	{
 		if ($ev->getGameRule() === "dodaylightcycle") {
-			foreach ($this->loader->getPlugin()->getServer()->getWorldManager()->getWorlds() as $world) {
+			foreach ($this->plugin->getServer()->getWorldManager()->getWorlds() as $world) {
 				if ($ev->isGameRuleEnabled()) {
 					$world->startTime();
 				} else {
@@ -61,54 +61,54 @@ class EventListener implements Listener
 	{
 		foreach ($ev->getPackets() as $packet) {
 			if ($packet instanceof StartGamePacket) {
-				$packet->gameRules = $this->loader->getGameRuleList();
+				$packet->gameRules = $this->plugin->getGameRuleList();
 			}
 		}
 	}
 
 	public function handleBreak(BlockBreakEvent $ev): void
 	{
-		if(!$this->loader->isGameRuleEnabled("dotiledrops")) {
+		if(!$this->plugin->isGameRuleEnabled("dotiledrops")) {
 			$ev->setDrops([]);
 		}
 	}
 
 	public function handleBurn(BlockBurnEvent $ev): void
 	{
-		if ($ev->getBlock()->getId() === VanillaBlocks::TNT()->getId() && !$this->loader->isGameRuleEnabled("tntexplodes")) {
+		if ($ev->getBlock()->getId() === VanillaBlocks::TNT()->getId() && !$this->plugin->isGameRuleEnabled("tntexplodes")) {
 			$ev->cancel();
 		}
 	}
 
 	public function handleDamage(EntityDamageEvent $ev): void
 	{
-		if ($ev instanceof EntityDamageByEntityEvent && !$this->loader->isGameRuleEnabled("pvp")) {
+		if ($ev instanceof EntityDamageByEntityEvent && !$this->plugin->isGameRuleEnabled("pvp")) {
 			$ev->cancel();
 		}
 	}
 
 	public function handleDeath(PlayerDeathEvent $ev): void
 	{
-		$ev->setKeepInventory($this->loader->isGameRuleEnabled("keepinventory"));
+		$ev->setKeepInventory($this->plugin->isGameRuleEnabled("keepinventory"));
 	}
 
 	public function handleEntityDeath(EntityDeathEvent $ev): void
 	{
-		if (!($ev->getEntity() instanceof Player) && !$this->loader->isGameRuleEnabled("domobloot")) {
+		if (!($ev->getEntity() instanceof Player) && !$this->plugin->isGameRuleEnabled("domobloot")) {
 			$ev->setDrops([]);
 		}
 	}
 
 	public function handleInteract(PlayerInteractEvent $ev): void
 	{
-		if ($ev->getBlock()->getId() === VanillaBlocks::TNT()->getId() && !$this->loader->isGameRuleEnabled("tntexplodes")) {
+		if ($ev->getBlock()->getId() === VanillaBlocks::TNT()->getId() && !$this->plugin->isGameRuleEnabled("tntexplodes")) {
 			$ev->cancel();
 		}
 	}
 
 	public function handleRegen(EntityRegainHealthEvent $ev): void
 	{
-		if (!$this->loader->isGameRuleEnabled("naturalregeneration") && $ev->getRegainReason() === EntityRegainHealthEvent::CAUSE_SATURATION) {
+		if (!$this->plugin->isGameRuleEnabled("naturalregeneration") && $ev->getRegainReason() === EntityRegainHealthEvent::CAUSE_SATURATION) {
 			$ev->cancel();
 		}
 	}

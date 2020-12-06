@@ -1,10 +1,8 @@
---- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/buchwasa/libGameRules
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/buchwasa/GameRules
 build-by-default: true
 branches:
 - main
 projects:
   libGameRules:
     path: ""
-    model: virion
-    type: library
 ...

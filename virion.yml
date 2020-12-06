@@ -1,6 +1,0 @@
-name: libGameRules
-version: 1.0.0
-antigen: buchwasa\libgamerules
-api: 4.0.0
-authors: [buchwasa]
-description: Adds support for gamerules

@@ -5,22 +5,19 @@ namespace buchwasa\libgamerules;
 
 use pocketmine\network\mcpe\protocol\GameRulesChangedPacket;
 use pocketmine\network\mcpe\protocol\types\BoolGameRule;
-use pocketmine\plugin\Plugin;
+use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
 
-class Loader
+class Loader extends PluginBase
 {
-	/** @var Plugin */
-	private Plugin $plugin;
 	/** @var BoolGameRule[] */
 	private array $cachedGameRules = [];
 	/** @var bool[] */
 	private array $lockedGameRules = [];
 
-	public function __construct(Plugin $plugin)
+	protected function onEnable()
 	{
-		$this->plugin = $plugin;
-		$this->plugin->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this->plugin);
+		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
 		$disabledGameRules = [
 			"dofiretick", "domobspawning", "mobgriefing",
 			"doweathercycle", "commandblocksenabled", "doentitydrops",
@@ -37,11 +34,6 @@ class Loader
 		foreach ($defaultGameRules as $defaultGameRule) {
 			$this->addGameRule($defaultGameRule, true);
 		}
-	}
-
-	public function getPlugin(): Plugin
-	{
-		return $this->plugin;
 	}
 
 	/**
