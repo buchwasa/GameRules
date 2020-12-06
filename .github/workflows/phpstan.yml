@@ -5,7 +5,8 @@ on: [push, pull_request]
 jobs: 
   phpstan: 
     runs-on: ubuntu-latest
-    steps: 
+    steps:
+      - uses: actions/checkout@v2
       - uses: nxtlvlsoftware/pmmp-phpstan-action@4
         with:
           phpstan-config: phpstan.neon.dist
