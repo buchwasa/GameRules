@@ -5,6 +5,7 @@ namespace gamerules;
 
 use pocketmine\network\mcpe\protocol\GameRulesChangedPacket;
 use pocketmine\network\mcpe\protocol\types\BoolGameRule;
+use pocketmine\network\mcpe\protocol\types\GameRule;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
 
@@ -73,9 +74,9 @@ class Loader extends PluginBase
 			$ev->call();
 			if (!$ev->isCancelled()) {
 				$this->cachedGameRules[$ev->getGameRule()] = new BoolGameRule($ev->isGameRuleEnabled());
-				if ($needsUpdated) {
+				if ($needsUpdated && $server !== null && $this->getGameRuleAsArray($ev->getGameRule()) !== null) {
 					$pk = new GameRulesChangedPacket();
-					$pk->gameRules = $this->getGameRuleArray($ev->getGameRule());
+					$pk->gameRules = $this->getGameRuleAsArray($ev->getGameRule());
 					$server->broadcastPackets($server->getOnlinePlayers(), [$pk]);
 				}
 			}
@@ -102,9 +103,9 @@ class Loader extends PluginBase
 	 * Gets the gamerule and returns it as an array for sending.
 	 *
 	 * @param string $gameRule
-	 * @return null[]|BoolGameRule[]|null
+	 * @return string[]|GameRule[]|null
 	 */
-	public function getGameRuleArray(string $gameRule): ?array
+	public function getGameRuleAsArray(string $gameRule): ?array
 	{
 		return $this->gameRuleExists($gameRule) ? [mb_strtolower($gameRule) => $this->getGameRule($gameRule)] : null;
 	}
@@ -119,6 +120,6 @@ class Loader extends PluginBase
 
 	public function isGameRuleEnabled(string $gameRule): bool
 	{
-		return $this->gameRuleExists($gameRule) && $this->getGameRule($gameRule)->getValue() === true;
+		return $this->gameRuleExists($gameRule) && $this->getGameRule($gameRule) !== null && $this->getGameRule($gameRule)->getValue() === true;
 	}
 }
