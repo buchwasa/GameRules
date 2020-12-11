@@ -3,4 +3,4 @@ parameters:
 	paths:
 		- src
 	bootstrapFiles:
-		- phar:///pocketmine/PocketMine-MP.phar/vendor/autoload.php
+		- ./pocketmine/vendor/autoload.php
